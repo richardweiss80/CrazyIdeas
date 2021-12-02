@@ -95,6 +95,18 @@ rule packer_upx_win_importedPEModule : Packers
         all of ($s_*)
 }
 
+private rule compiled_with_go {
+    meta:
+        description = "thanks to michael hunhoff and his provided capa rule"
+        description = "don't use without file format information"
+    strings:
+        $s_1 = "Go build ID:" fullword
+        $s_2 = "go.buildid"
+        $s_3 = "Go buildinf:" fullword
+    condition:
+        any of them
+}
+
 // least file size because of GO compiling behavior of imports
 // this is only a demonstrator for usage of scoring
 rule upx_packed_limits_scorebasedhunting
@@ -112,6 +124,7 @@ rule upx_packed_limits_scorebasedhunting
         math.to_number(packer_upx_win_importedPEModule) * 10 
             + math.to_number(arch_pe_64bit_importedPEModule) * 5 // + 32bit version * 1
             + math.to_number(filesize_gt_1dot5MB) * 5 + math.to_number(filesize_lt_5MB) * 5 // other file sizes only * 1 multiplier
-            >= 20
+            + math.to_number(compiled_with_go) * 5
+            >= 25
             // adding versions of UPX with different multipliers
 }
