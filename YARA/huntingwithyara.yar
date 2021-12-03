@@ -52,8 +52,8 @@ private rule filesize_lt_5MB
 //        arch_pe_64bit and
 //        uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10)) == 0x30585055 and
 //        uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x10) == 0x0 and
-//        uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x28) == 0x31585055 and
 //        uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x28 + 0x0C) - uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x0C) > 0 and
+//        uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x28) == 0x31585055 and        
 //        math.entropy((uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x28 + 0x14)),(uint32(uint32(0x3C)+ 0x04 + 0x14 + uint16(uint32(0x3C) + 0x04 + 0x10) + 0x28 + 0x10))) > 8 * 0.965 and
 //        all of ($import_*) and
 //        all of ($s_*)
@@ -88,8 +88,8 @@ rule packer_upx_win_importedPEModule : Packers
         magicbytes_pe and
         pe.sections[0].name == "UPX0" and
         pe.sections[0].raw_data_size == 0 and
+        pe.sections[0].virtual_size > 0 and
         pe.sections[1].name == "UPX1" and
-        pe.sections[1].virtual_size > 0 and
         math.entropy(pe.sections[1].raw_data_offset, pe.sections[1].raw_data_size) > 8 * 0.965 and
         all of ($import_*) and
         all of ($s_*)
